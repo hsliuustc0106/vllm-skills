@@ -223,10 +223,11 @@ class VLLMDeployer:
         env_args = self._build_docker_env_args()
         docker_cmd.extend(env_args)
 
-        # Image and model
+        # Image and vLLM server command-line arguments
         docker_cmd.append(image)
-        docker_cmd.append("--model")
-        docker_cmd.append(self.vllm_config.model)
+        # Ensure Docker deployment uses the same vLLM configuration
+        # (host/port, tensor parallelism, dtype, quantization, LoRA, etc.)
+        docker_cmd.extend(self.vllm_config.to_command_args())
 
         try:
             result = subprocess.run(
