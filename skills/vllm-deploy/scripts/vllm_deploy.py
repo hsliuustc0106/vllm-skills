@@ -233,12 +233,27 @@ class VLLMDeployer:
 
             endpoint_url = f"http://localhost:{port_mapping}/v1"
 
+            # Persist deployment metadata for later teardown (e.g., in stop()).
+            container_id = result.stdout.strip() if background else None
+            try:
+                self._deployment = {
+                    "type": "docker",
+                    "container_id": container_id,
+                    "image": image,
+                    "port": port_mapping,
+                    "endpoint_url": endpoint_url,
+                }
+            except AttributeError:
+                # If the instance does not support dynamic attributes, fail silently
+                # rather than breaking deployment. This preserves existing behavior.
+                pass
+
             return DeploymentResult(
                 success=True,
                 endpoint_url=endpoint_url,
                 message="vLLM deployed in Docker container",
                 metadata={
-                    "container_id": result.stdout.strip() if background else None,
+                    "container_id": container_id,
                     "image": image,
                 }
             )
