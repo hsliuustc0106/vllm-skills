@@ -284,7 +284,7 @@ test_api() {
     if [ -n "$CONTENT" ]; then
         echo ""
         log_success "API Test Successful!"
-        echo -e "${GREEN}Response:${NC} $CONTENT"
+        printf "${GREEN}Response:${NC} %s\n" "$CONTENT"
     else
         log_error "Failed to get valid response from API"
         exit 1
